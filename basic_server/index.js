@@ -3,7 +3,7 @@ const app = express()
 const port = 3000
 
 app.get('/', (req, res) => {
-    res.send('Hello World from aws & port removed by nginx!')
+    res.send('Hello World from aws & port removed by nginx  work on mobile!')
 })
 
 app.listen(port, () => {
