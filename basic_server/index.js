@@ -30,10 +30,18 @@ app.get('/sendpdf', (req, res) => {
     async function generatePDF() {
 
         // Launch headless Chrome with the new Headless mode
+        /*   const browser = await puppeteer.launch({
+              executablePath: '/etc/apparmor.d/abstractions/ubuntu-browsers.d/chromium-browser',
+              headless: true, // 'new',
+              dumpio: true, // Enable debugging output
+              args: ['--no-sandbox'],
+  
+          }); */
         const browser = await puppeteer.launch({
             executablePath: '/etc/apparmor.d/abstractions/ubuntu-browsers.d/chromium-browser',
-            headless: true, // 'new',
-            dumpio: true, // Enable debugging output
+            headless: true, // or headless: 'new'
+            dumpio: true,
+            args: ['--no-sandbox'],
         });
         const page = await browser.newPage();
         await page.goto('https://google.com');
