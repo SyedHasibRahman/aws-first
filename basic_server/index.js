@@ -32,7 +32,8 @@ app.get('/sendpdf', (req, res) => {
         // Launch headless Chrome with the new Headless mode
         const browser = await puppeteer.launch({
             executablePath: '/etc/apparmor.d/abstractions/ubuntu-browsers.d/chromium-browser',
-            headless: 'new',
+            headless: true, // 'new',
+            dumpio: true, // Enable debugging output
         });
         const page = await browser.newPage();
         await page.goto('https://google.com');
