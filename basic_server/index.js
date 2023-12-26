@@ -18,12 +18,20 @@ async function generatePDF() {
     await browser.close();
     return pdfBuffer;
 }
+
+
 app.get('/sendpdf', (req, res) => {
+
+    // /etc/apparmor.d/abstractions/ubuntu-browsers.d/chromium-browser
+
+    // /usr/share/bash-completion/completions/google-chrome
+    // /snap/core20/2015/usr/share/bash-completion/completions/google-chrome
     // Function to generate a PDF using Puppeteer
     async function generatePDF() {
 
         // Launch headless Chrome with the new Headless mode
         const browser = await puppeteer.launch({
+            executablePath: '/etc/apparmor.d/abstractions/ubuntu-browsers.d/chromium-browser',
             headless: 'new',
         });
         const page = await browser.newPage();
