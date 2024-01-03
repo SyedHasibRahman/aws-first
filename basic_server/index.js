@@ -11,7 +11,9 @@ app.get('/', (req, res) => {
 
 // Function to generate a PDF using Puppeteer
 async function generatePDF() {
-    const browser = await puppeteer.launch();
+    // const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({ executablePath: "/path/to/chromium-browser", headless: "new" });
+
     const page = await browser.newPage();
     await page.goto('https://google.com');
     const pdfBuffer = await page.pdf();
