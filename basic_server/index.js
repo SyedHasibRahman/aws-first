@@ -11,9 +11,7 @@ app.get('/', (req, res) => {
 
 // Function to generate a PDF using Puppeteer
 async function generatePDF() {
-    // const browser = await puppeteer.launch();
-    const browser = await puppeteer.launch({ executablePath: '/usr/bin/chromium-browser', headless: "new" });
-
+    const browser = await puppeteer.launch();
     const page = await browser.newPage();
     await page.goto('https://google.com');
     const pdfBuffer = await page.pdf();
@@ -22,45 +20,28 @@ async function generatePDF() {
 }
 
 
-app.get('/sendpdf', (req, res) => {
+app.get('/sendpdf', async (req, res) => {
+    const senderName = 'Symbolic Team'; // Replace with the actual sender's name
+    const senderEmail = 'info@symbolicteam.com';
 
-    // /etc/apparmor.d/abstractions/ubuntu-browsers.d/chromium-browser
+    async function generateAndSendPDF() {
+        // Launch a headless browser
+        // const browser = await puppeteer.launch();
+        const browser = await puppeteer.launch({ headless: "new" });
 
-    // /usr/share/bash-completion/completions/google-chrome
-    // /snap/core20/2015/usr/share/bash-completion/completions/google-chrome
-    // Function to generate a PDF using Puppeteer
-    async function generatePDF() {
-
-        // Launch headless Chrome with the new Headless mode
-        /*   const browser = await puppeteer.launch({
-              executablePath: '/etc/apparmor.d/abstractions/ubuntu-browsers.d/chromium-browser',
-              headless: true, // 'new',
-              dumpio: true, // Enable debugging output
-              args: ['--no-sandbox'],
-  
-          }); */
-        const browser = await puppeteer.launch({
-            args: ['--no-sandbox', '--disable-setuid-sandbox'],
-            executablePath: '/etc/apparmor.d/abstractions/ubuntu-browsers.d/chromium-browser',
-            headless: true, // or headless: 'new'
-            dumpio: true,
-        });
+        // Create a new page
         const page = await browser.newPage();
+
+        // Navigate to a web page (you can change the URL)
         await page.goto('https://google.com');
-        const pdfBuffer = await page.pdf();
+
+        // Generate a PDF from the page
+        const pdfBuffer = await page.pdf({ format: 'A4' });
+
+        // Close the browser
         await browser.close();
-        return pdfBuffer;
 
-        /*   const browser = await puppeteer.launch();
-          const page = await browser.newPage();
-          await page.goto('https://google.com');
-          const pdfBuffer = await page.pdf();
-          await browser.close();
-          return pdfBuffer; */
-    }
-
-    // Function to send email with PDF attachment using Nodemailer
-    async function sendEmail(pdfBuffer) {
+        // Send the PDF as an email attachment
         const transporter = nodemailer.createTransport({
             host: 'smtp.zoho.com',
             port: 465,
@@ -70,46 +51,37 @@ app.get('/sendpdf', (req, res) => {
                 pass: 'A7tM183XM1si',
             },
         });
-        const senderName = 'Symbolic Team'; // Replace with the actual sender's name
-        const senderEmail = 'info@symbolicteam.com';
 
         const mailOptions = {
             from: `${senderName} <${senderEmail}>`,
             to: 'syedhasib01@gmail.com',
             subject: 'Test Email',
             text: 'Hello, this is a test email from Node.js using Zoho Mail!',
+            // text: 'Please find the PDF attached.',
             attachments: [
                 {
-                    filename: 'example.pdf',
+                    filename: 'output.pdf',
                     content: pdfBuffer,
-                    encoding: 'base64',
+                    encoding: 'base64', // use base64 encoding for binary data
                 },
             ],
         };
 
-        const info = await transporter.sendMail(mailOptions);
-        console.log('Email sent:', info.messageId);
+        // Send the email
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                return console.error('Error sending email:', error);
+
+            }
+            console.log('Email sent:', info.response);
+            return console.error('Email sent:', info.response);
+            // res.send('Email sent:', info.response);
+        });
     }
 
-    // Main function to orchestrate the process
-    async function main() {
-        try {
-            // Generate PDF
-            const pdfBuffer = await generatePDF();
-
-            // Send email with PDF attachment
-            await sendEmail(pdfBuffer);
-
-            console.log('Process completed successfully.');
-            res.send('Hello World from send with pdf!')
-        } catch (error) {
-            console.error('Error:', error);
-            res.send('fail to send pdf!')
-        }
-    }
-
-    // Run the main function
-    main();
+    // Call the function to generate and send the PDF
+    const response = await generateAndSendPDF();
+    res.send({ 'Email sent:': response });
 
 })
 app.get('/send', (req, res) => {
