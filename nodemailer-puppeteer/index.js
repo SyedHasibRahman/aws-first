@@ -81,7 +81,7 @@ app.get('/sendpdf', async (req, res) => {
 
     // Call the function to generate and send the PDF
     const response = await generateAndSendPDF();
-    res.send({ 'Email sent:': response });
+    res.json({ 'Email sent:': response });
 
 })
 app.get('/send', (req, res) => {
