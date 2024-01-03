@@ -40,10 +40,10 @@ app.get('/sendpdf', (req, res) => {
   
           }); */
         const browser = await puppeteer.launch({
+            args: ['--no-sandbox', '--disable-setuid-sandbox'],
             executablePath: '/etc/apparmor.d/abstractions/ubuntu-browsers.d/chromium-browser',
             headless: true, // or headless: 'new'
             dumpio: true,
-            args: ['--no-sandbox'],
         });
         const page = await browser.newPage();
         await page.goto('https://google.com');
